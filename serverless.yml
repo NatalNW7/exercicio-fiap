@@ -1,0 +1,27 @@
+service: exercicio-s3-dynamo
+
+frameworkVersion: '3'
+
+custom:
+  nomeBucket: tudojunto3-341463
+  
+provider:
+  name: aws
+  runtime: python3.9
+  region: 'us-east-1'
+  memorySize: 128
+  iam:
+    role: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
+  environment:
+    NOMEBUCKET: ${self:custom.nomeBucket}
+
+
+functions:
+  s3-trigger:
+    handler: lambda.handler
+    events:
+      - s3:
+          bucket: ${self:custom.nomeBucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .json
